@@ -1,30 +1,32 @@
-import { Button, Card, Container, Grid, Text, Image } from "@nextui-org/react";
-import { GetStaticPaths, GetStaticProps, NextPage } from "next";
-import { pokeApi } from "../../api";
-import { Layout } from "../../components/layout";
-import { Pokemon } from "../../interfaces";
-import { localFavorites } from "../../utils";
+import { useState } from 'react';
+import { Button, Card, Container, Grid, Text, Image } from '@nextui-org/react';
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import { pokeApi } from '../../api';
+import { Layout } from '../../components/layout';
+import { Pokemon } from '../../interfaces';
+import { localFavorites } from '../../utils';
 
 interface Props {
   pokemon: Pokemon;
 }
 
 const PokemonPage: NextPage<Props> = ({ pokemon }) => {
+  const [isInFav, setIsInFav] = useState(localFavorites.existInFav(pokemon.id));
   const onToggleFav = () => {
-    console.log("fav added");
     localFavorites.toggleFavorites(pokemon.id);
+    setIsInFav(!isInFav);
   };
 
   return (
     <Layout title={pokemon.name}>
-      <Grid.Container css={{ marginTop: "5px" }} gap={2}>
+      <Grid.Container css={{ marginTop: '5px' }} gap={2}>
         <Grid xs={12} sm={4}>
-          <Card hoverable css={{ padding: "30px" }}>
+          <Card hoverable css={{ padding: '30px' }}>
             <Card.Body>
               <Card.Image
                 src={
-                  pokemon.sprites.other?.["official-artwork"].front_default ||
-                  "no-image"
+                  pokemon.sprites.other?.['official-artwork'].front_default ||
+                  'no-image'
                 }
                 alt={pokemon.name}
                 width="100%"
@@ -37,11 +39,11 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
         <Grid xs={12} sm={8}>
           <Card>
             <Card.Header
-              css={{ display: "flex", justifyContent: "space-between" }}
+              css={{ display: 'flex', justifyContent: 'space-between' }}
             >
               <Text h1>{pokemon.name}</Text>
-              <Button color="gradient" ghost onClick={onToggleFav}>
-                Fav
+              <Button color="gradient" ghost={!isInFav} onClick={onToggleFav}>
+                {!isInFav ? 'Add Fav' : 'Fav'}
               </Button>
             </Card.Header>
             <Card.Body>
