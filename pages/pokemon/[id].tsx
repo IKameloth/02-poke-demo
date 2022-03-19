@@ -4,7 +4,7 @@ import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { pokeApi } from '../../api';
 import { Layout } from '../../components/layout';
 import { PokeListResponse, Pokemon } from '../../interfaces';
-import { localFavorites } from '../../utils';
+import { getPokemonInfo, localFavorites } from '../../utils';
 import confetti from 'canvas-confetti';
 
 interface Props {
@@ -111,17 +111,9 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { id } = params as { id: string };
 
-  const { data } = await pokeApi.get<Pokemon>(`/pokemon/${id}`);
-
-  const pokeInfo = {
-    id: data.id,
-    name: data.name,
-    sprites: data.sprites
-  }
-
   return {
     props: {
-      pokemon: pokeInfo,
+      pokemon: await getPokemonInfo(id),
     },
   };
 };
